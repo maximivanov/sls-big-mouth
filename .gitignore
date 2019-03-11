@@ -1,0 +1,10 @@
+# editor
+.idea/workspace.xml
+.idea/tasks.xml
+
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
