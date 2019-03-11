@@ -10,7 +10,12 @@ describe(`When we invoke the GET /restaurants endpoint`, () => {
   });
 
   it(`Should return an array of 8 restaurants`, async () => {
-    let res = await when.we_invoke_get_restaurants();
+    let res;
+    try {
+      res = await when.we_invoke_get_restaurants();
+    } catch (e) {
+      return Promise.reject();
+    }
 
     expect(res.statusCode).to.equal(200);
     expect(res.body).to.have.lengthOf(8);
