@@ -7,8 +7,12 @@ const Mustache = require('mustache');
 const axios = require('axios');
 const aws4 = require('aws4');
 const URL = require('url');
-// const bluebird = require('bluebird');
-// const awscred = bluebird.promisifyAll(require('awscred'));
+
+let awscred;
+if (!process.env.AWS_ACCESS_KEY_ID) {
+  const bluebird = require('bluebird');
+  awscred = bluebird.promisifyAll(require('awscred'));
+}
 
 const awsRegion = process.env.AWS_REGION;
 const restaurantsApiRoot = process.env.restaurants_api;
@@ -33,12 +37,16 @@ async function loadRestaurants() {
     path: url.pathname
   };
 
-  // if (!process.env.AWS_ACCESS_KEY_ID) {
-  //   let cred = (await awscred.loadAsync()).credentials;
-  //
-  //   process.env.AWS_ACCESS_KEY_ID = cred.accessKeyId;
-  //   process.env.AWS_SECRET_ACCESS_KEY = cred.secretAccessKey;
-  // }
+  if (!process.env.AWS_ACCESS_KEY_ID) {
+    let cred = (await awscred.loadAsync()).credentials;
+
+    process.env.AWS_ACCESS_KEY_ID = cred.accessKeyId;
+    process.env.AWS_SECRET_ACCESS_KEY = cred.secretAccessKey;
+
+    if (cred.sessionToken) {
+      process.env.AWS_SESSION_TOKEN = cred.sessionToken;
+    }
+  }
 
   aws4.sign(opts);
 
